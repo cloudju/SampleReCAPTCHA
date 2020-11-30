@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -26,8 +26,24 @@ import {
 import GoogleReCaptcha from 'rn-google-recaptcha-v2';
 
 const App = () => {
+  const [ height, setHeight ] = useState(90)
   const onRecaptchaEvent = event => {
-    
+    if (event && event.nativeEvent.data) {
+      const data = decodeURIComponent(
+        decodeURIComponent(event.nativeEvent.data),
+      );
+      if (data.startsWith('CONTENT_PARAMS:')) {
+        let params = JSON.parse(data.substring(15));
+        let recaptchaViewHeight = params.visibility === 'visible' ? params.height : 90;
+        setHeight(recaptchaViewHeight);
+      } else if (['cancel', 'error', 'expired'].includes(data)) {
+        console.log('cancel, error, expired')
+        return;
+      } else {
+        console.log('Verified code from Google', data);
+        //this.setState({ recaptchaToken: data });
+      }
+    }
   };
   const sitekey="6LfvBPMZAAAAAOP61log4pihxGeZPfXHBD3ZVZxr"
   const baseUrl = "http://cloudju.org"
@@ -38,11 +54,12 @@ const App = () => {
         <ScrollView>
         <Text style={styles.sectionTitle}>Step One</Text>
         <GoogleReCaptcha
-          style={{ height: 600 }}
+          style={{ height: height }}
           siteKey={sitekey}
           url={baseUrl}
           languageCode="zh-CN"
           onMessage={onRecaptchaEvent} />
+          <Text style={styles.sectionTitle}>Step two</Text>
         </ScrollView>
       </SafeAreaView>
     </>
