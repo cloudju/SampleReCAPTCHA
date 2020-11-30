@@ -23,15 +23,26 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import GoogleReCaptcha from 'rn-google-recaptcha-v2';
 
 const App = () => {
+  const onRecaptchaEvent = event => {
+    
+  };
+  const sitekey="6LfvBPMZAAAAAOP61log4pihxGeZPfXHBD3ZVZxr"
+  const baseUrl = "http://cloudju.org"
   return (
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView>
         <ScrollView>
         <Text style={styles.sectionTitle}>Step One</Text>
-          
+        <GoogleReCaptcha
+          style={{ height: 600 }}
+          siteKey={sitekey}
+          url={baseUrl}
+          languageCode="zh-CN"
+          onMessage={onRecaptchaEvent} />
         </ScrollView>
       </SafeAreaView>
     </>
